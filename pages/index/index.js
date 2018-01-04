@@ -10,23 +10,21 @@ const options = {
   format: 'aac',
   frameSize: 50
 }
+const innerAudioContext = wx.createInnerAudioContext()
+innerAudioContext.autoplay = true
 recorderManager.onStart(() => {
   console.log('recorder start')
 })
-recorderManager.onResume(() => {
-  console.log('recorder resume')
-})
-recorderManager.onPause(() => {
-  console.log('recorder pause')
-})
 recorderManager.onStop((res) => {
   console.log('recorder stop', res)
-  const { tempFilePath } = res
+  innerAudioContext.src = res.tempFilePath;
+  innerAudioContext.play();
 })
 recorderManager.onFrameRecorded((res) => {
   const { frameBuffer } = res
   console.log('frameBuffer.byteLength', frameBuffer.byteLength)
 })
+
 Page({
   data: {
     recordAudioButtonText: '按住 说话',
@@ -41,30 +39,10 @@ Page({
     })
   },
   onLoad: function () {
-    if (app.globalData.userInfo) {
+    app.userInfoReadyCallback = res => {
       this.setData({
-        userInfo: app.globalData.userInfo,
+        userInfo: res.userInfo,
         hasUserInfo: true
-      })
-    } else if (this.data.canIUse){
-      // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-      // 所以此处加入 callback 以防止这种情况
-      app.userInfoReadyCallback = res => {
-        this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true
-        })
-      }
-    } else {
-      // 在没有 open-type=getUserInfo 版本的兼容处理
-      wx.getUserInfo({
-        success: res => {
-          app.globalData.userInfo = res.userInfo
-          this.setData({
-            userInfo: res.userInfo,
-            hasUserInfo: true
-          })
-        }
       })
     }
   },
