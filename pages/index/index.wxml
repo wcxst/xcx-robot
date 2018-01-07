@@ -1,12 +1,13 @@
 <!--index.wxml-->
 <view class="container">
-  <view class="userinfo">
-    <block>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
+  <view id="chat-wrap" class="chat-thread">
+    <view wx:for="{{messages}}">
+      <view class='message {{item.type}}'>{{item.message}}</view>
+    </view>
   </view>
-  <view class="usermotto">
-    <button bindtouchstart="startRecordAudio" bindtouchend="stopRecordAudio">{{recordAudioButtonText}}</button>
+  <view class="wrap-record">
+    <button class="btn-record" bindtouchstart="startRecordAudio" bindtouchend="stopRecordAudio">
+      <i class="fa fa-microphone"></i>
+    </button>
   </view>
 </view>
