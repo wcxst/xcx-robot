@@ -15,10 +15,6 @@ App({
               var code = res.code;
               wx.getUserInfo({
                 success: res => {
-                  this.globalData.userInfo = res.userInfo
-                  if (this.userInfoReadyCallback) {
-                    this.userInfoReadyCallback(res)
-                  }
                   wx.request({
                     url: 'https://api.robot.lerzen.com/login.html',
                     data: {
@@ -32,6 +28,8 @@ App({
                       wx.setStorageSync('unionID', data.unionID);
                       wx.setStorageSync('openID', data.openID);
                       wx.setStorageSync('openID', data.openID);
+                      wx.setStorageSync('nickName', data.nickName);
+                      wx.setStorageSync('avatarUrl', data.avatarUrl);
                     }
                   })
                 }
@@ -48,7 +46,4 @@ App({
       }
     })
   },
-  globalData: {
-    userInfo: null
-  }
 })

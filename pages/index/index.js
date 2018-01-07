@@ -3,7 +3,7 @@
 const app = getApp()
 const recorderManager = wx.getRecorderManager()
 const options = {
-  format: 'mp3'
+  format: 'aac',
 }
 const innerAudioContext = wx.createInnerAudioContext()
 innerAudioContext.autoplay = true
@@ -11,9 +11,10 @@ recorderManager.onStart(() => {
   console.log('recorder start')
 })
 recorderManager.onStop((res) => {
-  console.log('recorder stop', res)
-  // innerAudioContext.src = res.tempFilePath;
-  // innerAudioContext.play();
+  wx.showLoading({
+    title: '识别中',
+    mask: true,
+  })
   wx.uploadFile({
     url: 'https://api.robot.lerzen.com/chat.html',
     filePath: res.tempFilePath,
@@ -21,9 +22,15 @@ recorderManager.onStop((res) => {
     formData: {
       'token': wx.getStorageSync('token')
     },
+    dataType: 'json',
     success: function (res) {
-      var data = res.data
-      console.log(data);
+      wx.hideLoading()
+      var data = JSON.parse(res.data);
+      innerAudioContext.src = data.data.audio;
+      innerAudioContext.play();
+    },
+    fail: function(){
+      wx.hideLoading()
     }
   })
 })
@@ -35,29 +42,15 @@ recorderManager.onFrameRecorded((res) => {
 Page({
   data: {
     recordAudioButtonText: '按住 说话',
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    userInfo: {
+      nickName: wx.getStorageSync('nickName'),
+      avatarUrl: wx.getStorageSync('avatarUrl')
+    }
   },
   //事件处理函数
   bindViewTap: function() {
     wx.navigateTo({
       url: '../logs/logs'
-    })
-  },
-  onLoad: function () {
-    app.userInfoReadyCallback = res => {
-      this.setData({
-        userInfo: res.userInfo,
-        hasUserInfo: true
-      })
-    }
-  },
-  getUserInfo: function(e) {
-    app.globalData.userInfo = e.detail.userInfo
-    this.setData({
-      userInfo: e.detail.userInfo,
-      hasUserInfo: true
     })
   },
   startRecordAudio: function(e){
