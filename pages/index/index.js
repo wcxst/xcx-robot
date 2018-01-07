@@ -3,12 +3,7 @@
 const app = getApp()
 const recorderManager = wx.getRecorderManager()
 const options = {
-  duration: 10000,
-  sampleRate: 44100,
-  numberOfChannels: 1,
-  encodeBitRate: 192000,
-  format: 'aac',
-  frameSize: 50
+  format: 'mp3'
 }
 const innerAudioContext = wx.createInnerAudioContext()
 innerAudioContext.autoplay = true
@@ -17,8 +12,20 @@ recorderManager.onStart(() => {
 })
 recorderManager.onStop((res) => {
   console.log('recorder stop', res)
-  innerAudioContext.src = res.tempFilePath;
-  innerAudioContext.play();
+  // innerAudioContext.src = res.tempFilePath;
+  // innerAudioContext.play();
+  wx.uploadFile({
+    url: 'https://api.robot.lerzen.com/chat.html',
+    filePath: res.tempFilePath,
+    name: 'file',
+    formData: {
+      'token': wx.getStorageSync('token')
+    },
+    success: function (res) {
+      var data = res.data
+      console.log(data);
+    }
+  })
 })
 recorderManager.onFrameRecorded((res) => {
   const { frameBuffer } = res
@@ -47,7 +54,6 @@ Page({
     }
   },
   getUserInfo: function(e) {
-    console.log(e)
     app.globalData.userInfo = e.detail.userInfo
     this.setData({
       userInfo: e.detail.userInfo,

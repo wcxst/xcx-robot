@@ -5,28 +5,43 @@ App({
     var logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
-
-    // 登录
-    wx.login({
-      success: res => {
-        console.log(res);
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
-      }
-    })
     // 获取用户信息
     wx.getSetting({
       success: res => {
-        wx.getUserInfo({
+        // 登录
+        wx.login({
           success: res => {
-            // 可以将 res 发送给后台解码出 unionId
-            this.globalData.userInfo = res.userInfo
-            // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-            // 所以此处加入 callback 以防止这种情况
-            if (this.userInfoReadyCallback) {
-              this.userInfoReadyCallback(res)
+            if (res.code) {
+              var code = res.code;
+              wx.getUserInfo({
+                success: res => {
+                  this.globalData.userInfo = res.userInfo
+                  if (this.userInfoReadyCallback) {
+                    this.userInfoReadyCallback(res)
+                  }
+                  wx.request({
+                    url: 'https://api.robot.lerzen.com/login.html',
+                    data: {
+                      code: code,
+                      encryptedData: res.encryptedData,
+                      iv: res.iv,
+                    },
+                    success: function (res) {
+                      var data = res.data.data;
+                      wx.setStorageSync('openID', data.openID);
+                      wx.setStorageSync('unionID', data.unionID);
+                      wx.setStorageSync('openID', data.openID);
+                      wx.setStorageSync('openID', data.openID);
+                    }
+                  })
+                }
+              })
+            } else {
+              console.log('获取用户登录态失败！' + res.errMsg)
             }
           }
-        }),
+        })
+        
         wx.authorize({
           scope: 'scope.record',
         })
