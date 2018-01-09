@@ -1,10 +1,10 @@
 <!--index.wxml-->
 <view class="container">
-  <view id="chat-wrap" class="chat-thread">
+  <scroll-view id="chat-wrap" class="chat-thread" style='height:{{chatWrapHeight}}px' scroll-y="true" enable-back-to-top="true">
     <view wx:for="{{messages}}">
       <view class='message {{item.type}}'>{{item.message}}</view>
     </view>
-  </view>
+  </scroll-view>
   <view class="wrap-record">
     <button class="btn-record" bindtouchstart="startRecordAudio" bindtouchend="stopRecordAudio">
       <i class="fa fa-microphone"></i>

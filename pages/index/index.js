@@ -10,7 +10,40 @@ Page({
       nickName: wx.getStorageSync('nickName'),
       avatarUrl: wx.getStorageSync('avatarUrl')
     },
+    chatWrapHeight: wx.getSystemInfoSync().windowHeight - wx.getSystemInfoSync().windowWidth / 750 * 230,
     messages: [
+      {
+        type: 'robot',
+        message: '你好'
+      },
+      {
+        type: 'user',
+        message: '你好'
+      },
+      {
+        type: 'robot',
+        message: '你好'
+      },
+      {
+        type: 'user',
+        message: '你好'
+      },
+      {
+        type: 'robot',
+        message: '你好'
+      },
+      {
+        type: 'user',
+        message: '你好'
+      },
+      {
+        type: 'robot',
+        message: '你好'
+      },
+      {
+        type: 'user',
+        message: '你好'
+      },
       {
         type: 'robot',
         message: '你好'
@@ -23,6 +56,7 @@ Page({
   },
   recorderManager: wx.getRecorderManager(),
   onLoad: function () {
+    this.appendMessage('user', '111'),
     this.recorderManager.onStop((res) => {
       var _this = this;
       wx.showLoading({
@@ -95,6 +129,9 @@ Page({
     messages.push({ type: type, message: message});
     this.setData({
       messages: messages,
+    })
+    wx.pageScrollTo({
+      scrollTop: this.chatWrapHeight
     })
   }
 })
