@@ -93,7 +93,7 @@ page{
 }
 
 .wrap-record {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   width: 86.5%;
   height: 110rpx; 

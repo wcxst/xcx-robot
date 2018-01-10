@@ -4,6 +4,7 @@
     "pages/logs/logs"
   ],
   "window":{
+    "backgroundColor": "#183850",
     "backgroundTextStyle":"light",
     "navigationBarBackgroundColor": "#183850",
     "navigationBarTitleText": "果冻陪你聊",

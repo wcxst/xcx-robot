@@ -8,12 +8,12 @@
       </view>
       <image src="{{userInfo.avatarUrl ? userInfo.avatarUrl : defaultAvatar.user}}" class="avatar" wx:if="{{item.type == 'user'}}"></image>
     </view>
-    <view class="wrap-record">
-      <view class='wrap-btn'>
-        <button class="btn-record" bindtouchstart="startRecordAudio" bindtouchend="stopRecordAudio">
-          <i class="fa fa-microphone"></i>
-        </button>
-      </view>
-    </view>
   </scroll-view>
+  <view class="wrap-record">
+    <view class='wrap-btn'>
+      <button class="btn-record" bindtouchstart="startRecordAudio" bindtouchend="stopRecordAudio">
+        <i class="fa fa-microphone"></i>
+      </button>
+    </view>
+  </view>
 </view>
