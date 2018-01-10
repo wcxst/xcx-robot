@@ -10,53 +10,25 @@ Page({
       nickName: wx.getStorageSync('nickName'),
       avatarUrl: wx.getStorageSync('avatarUrl')
     },
-    chatWrapHeight: wx.getSystemInfoSync().windowHeight - wx.getSystemInfoSync().windowWidth / 750 * 230,
+    defaultAvatar: {
+      robot: '/images/default-robot.jpg',
+      user: '/images/default-user.jpg',
+    },
+    messageViewWidth: wx.getSystemInfoSync().windowWidth - wx.getSystemInfoSync().windowWidth / 750 * 350,
+    chatWrapHeight: wx.getSystemInfoSync().windowHeight - wx.getSystemInfoSync().windowWidth / 750 * 150,
+    chatWrapScrollTop: 0,
     messages: [
       {
         type: 'robot',
-        message: '你好'
-      },
-      {
-        type: 'user',
-        message: '你好'
-      },
-      {
-        type: 'robot',
-        message: '你好'
-      },
-      {
-        type: 'user',
-        message: '你好'
-      },
-      {
-        type: 'robot',
-        message: '你好'
-      },
-      {
-        type: 'user',
-        message: '你好'
-      },
-      {
-        type: 'robot',
-        message: '你好'
-      },
-      {
-        type: 'user',
-        message: '你好'
-      },
-      {
-        type: 'robot',
-        message: '你好'
-      },
-      {
-        type: 'user',
-        message: '你好'
+        message: '你好,我是果冻,我可以陪你聊天帮你查天气哦~'
       },
     ]
   },
   recorderManager: wx.getRecorderManager(),
   onLoad: function () {
-    this.appendMessage('user', '111'),
+    wx.showShareMenu({
+      withShareTicket: true
+    })
     this.recorderManager.onStop((res) => {
       var _this = this;
       wx.showLoading({
@@ -73,6 +45,11 @@ Page({
         dataType: 'json',
         success: function (res) {
           wx.hideLoading() 
+          var responseData = JSON.parse(res.data);
+          if (responseData.status == 0) {
+            _this.appendMessage('error', '-- 没有识别出来,再试一次? --');
+            return false;
+          }
           var data = JSON.parse(res.data).data;
           _this.appendMessage('user', data.chatRecord.message);
           wx.request({
@@ -82,11 +59,29 @@ Page({
               chatRecordID: data.chatRecord.id
             },
             success: function (res) {
+              console.log(res.data);
+              if (res.data.status == 0) {
+                _this.appendMessage('error', '-- 果冻开小差了,再试一次? --');
+                return false;
+              }
               var data = res.data.data;
-              console.log(data);
-              _this.appendMessage('robot', data.chatRecord.reply);
+              switch (data.chatRecord.replyCode) {
+                case '100000':
+                  // 文本
+                  _this.appendMessage('robot', data.chatRecord.reply);
+                  break;
+                case '200000':
+                case '302000':
+                case '308000':
+                default:
+                  _this.appendMessage('error', '-- 小程序暂不支持外部链接 --');
+                  break;
+              }
               innerAudioContext.src = data.chatRecord.replyAudio;
               innerAudioContext.play();
+            },
+            fail: function () {
+              _this.appendMessage('error', '-- 果冻开小差了,再试一次? --');
             }
           })
         },
@@ -96,13 +91,12 @@ Page({
       })
     })
     this.recorderManager.onError((res) => {
-      wx.hideLoading()
-    })
-  },
-  //事件处理函数
-  bindViewTap: function() {
-    wx.navigateTo({
-      url: '../logs/logs'
+      var _this = this;
+      console.log(res);
+      wx.hideLoading();
+      if (res.errMsg == 'operateRecorder:fail auth deny'){
+        _this.appendMessage('error', '-- 未授权使用录音功能 --');
+      }
     })
   },
   startRecordAudio: function (e) {
@@ -129,9 +123,7 @@ Page({
     messages.push({ type: type, message: message});
     this.setData({
       messages: messages,
+      chatWrapScrollTop: this.data.chatWrapScrollTop + 120
     })
-    wx.pageScrollTo({
-      scrollTop: this.chatWrapHeight
-    })
-  }
+  },
 })

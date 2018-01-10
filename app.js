@@ -39,10 +39,14 @@ App({
             }
           }
         })
-        
-        wx.authorize({
-          scope: 'scope.record',
-        })
+        if (!res.authSetting['scope.record']) {
+          wx.authorize({
+            scope: 'scope.record',
+            success() {
+              wx.startRecord()
+            }
+          })
+        }
       }
     })
   },

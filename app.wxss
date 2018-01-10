@@ -9,5 +9,5 @@
   justify-content: space-between;
   box-sizing: border-box;
   width: 100%;
-  padding: 35rpx;
+  padding: 0 35rpx;
 } 

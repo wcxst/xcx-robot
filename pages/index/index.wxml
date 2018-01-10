@@ -1,13 +1,19 @@
 <!--index.wxml-->
 <view class="container">
-  <scroll-view id="chat-wrap" class="chat-thread" style='height:{{chatWrapHeight}}px' scroll-y="true" enable-back-to-top="true">
-    <view wx:for="{{messages}}">
-      <view class='message {{item.type}}'>{{item.message}}</view>
+  <scroll-view id="chat-wrap" class="chat-thread" style='height:{{chatWrapHeight}}px' scroll-y="true" enable-back-to-top="true" scroll-top="{{chatWrapScrollTop}}">
+    <view wx:for="{{messages}}" class='wrap-message wrap-message-{{item.type}}'>
+      <image src="{{defaultAvatar.robot}}" class="avatar" wx:if="{{item.type == 'robot'}}"></image>
+      <view class='message {{item.type}}' style='max-width:{{item.type == "error" ? "100%" : messageViewWidth+"px"}}'>
+        {{item.message}}
+      </view>
+      <image src="{{userInfo.avatarUrl ? userInfo.avatarUrl : defaultAvatar.user}}" class="avatar" wx:if="{{item.type == 'user'}}"></image>
+    </view>
+    <view class="wrap-record">
+      <view class='wrap-btn'>
+        <button class="btn-record" bindtouchstart="startRecordAudio" bindtouchend="stopRecordAudio">
+          <i class="fa fa-microphone"></i>
+        </button>
+      </view>
     </view>
   </scroll-view>
-  <view class="wrap-record">
-    <button class="btn-record" bindtouchstart="startRecordAudio" bindtouchend="stopRecordAudio">
-      <i class="fa fa-microphone"></i>
-    </button>
-  </view>
 </view>
