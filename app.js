@@ -43,7 +43,15 @@ App({
           wx.authorize({
             scope: 'scope.record',
             success() {
-              wx.startRecord()
+              // wx.startRecord()
+            }
+          })
+          wx.setInnerAudioOption({
+            obeyMuteSwitch: true
+          })
+          wx.getSystemInfo({
+            success(res) {
+              console.log(res)
             }
           })
         }
